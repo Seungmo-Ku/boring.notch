@@ -27,6 +27,8 @@ public enum NotchState {
 public enum NotchViews {
     case home
     case shelf
+    case gagyebu // 가계부 (My Tabs)
+    case claudeUsage // Claude 사용량 (My Tabs)
 }
 
 enum SettingsEnum {
