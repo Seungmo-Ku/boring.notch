@@ -349,6 +349,10 @@ struct ContentView: View {
                         NotchHomeView(albumArtNamespace: albumArtNamespace)
                     case .shelf:
                         ShelfView()
+                    case .gagyebu:
+                        GagyebuView()
+                    case .claudeUsage:
+                        ClaudeUsageView()
                     }
                 }
                 .transition(

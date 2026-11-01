@@ -54,6 +54,9 @@ struct SettingsView: View {
                 NavigationLink(value: "Shortcuts") {
                     Label("Shortcuts", systemImage: "keyboard")
                 }
+                NavigationLink(value: "MyTabs") {
+                    Label("My Tabs", systemImage: "square.grid.2x2")
+                }
                 // NavigationLink(value: "Extensions") {
                 //     Label("Extensions", systemImage: "puzzlepiece.extension")
                 // }
@@ -87,6 +90,8 @@ struct SettingsView: View {
                     Shelf()
                 case "Shortcuts":
                     Shortcuts()
+                case "MyTabs":
+                    MyTabsSettingsView()
                 case "Extensions":
                     GeneralSettings()
                 case "Advanced":
