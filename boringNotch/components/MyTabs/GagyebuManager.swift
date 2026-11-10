@@ -41,6 +41,36 @@ struct GagyebuSummary: Decodable {
     let balance: Balance?
     let integrated: Integrated?
     let txs: [Tx]
+    /// 페이팔(달러) 계좌. 서버에서 null(DB 없음)이나 {error}로 올 수 있어 모든 필드가 옵셔널
+    let paypal: Paypal?
+}
+
+extension GagyebuSummary {
+    /// gagyebu GET /api/tx 의 paypal 필드. 어떤 모양이 와도 디코딩이 실패하지 않게 직접 풂
+    /// (페이팔 문제로 가계부 탭 전체가 깨지지 않도록)
+    struct Paypal: Decodable {
+        let balance: Double?
+        let monthIn: Double?
+        let monthOut: Double?
+        let monthWithdrawn: Double?
+        let error: String?
+
+        private enum CodingKeys: String, CodingKey {
+            case balance, monthIn, monthOut, monthWithdrawn, error
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try? decoder.container(keyedBy: CodingKeys.self)
+            balance = (try? c?.decodeIfPresent(Double.self, forKey: .balance)) ?? nil
+            monthIn = (try? c?.decodeIfPresent(Double.self, forKey: .monthIn)) ?? nil
+            monthOut = (try? c?.decodeIfPresent(Double.self, forKey: .monthOut)) ?? nil
+            monthWithdrawn = (try? c?.decodeIfPresent(Double.self, forKey: .monthWithdrawn)) ?? nil
+            error = (try? c?.decodeIfPresent(String.self, forKey: .error)) ?? nil
+        }
+
+        /// 표시할 수 있는 정상 응답인지 (null·{error}·잔고 없음이면 false)
+        var isUsable: Bool { error == nil && balance != nil }
+    }
 }
 
 @MainActor
