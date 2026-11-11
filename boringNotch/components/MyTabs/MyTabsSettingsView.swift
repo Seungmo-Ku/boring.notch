@@ -11,6 +11,7 @@ import SwiftUI
 struct MyTabsSettingsView: View {
     @Default(.enableGagyebuTab) var enableGagyebuTab
     @Default(.gagyebuBaseURL) var gagyebuBaseURL
+    @Default(.showGagyebuPaypal) var showGagyebuPaypal
     @Default(.enableClaudeUsageTab) var enableClaudeUsageTab
 
     @State private var gagyebuToken = MyTabsKeychain.get(MyTabsKeychain.gagyebuToken) ?? ""
@@ -22,6 +23,7 @@ struct MyTabsSettingsView: View {
         Form {
             Section {
                 Toggle("Show budget tab (가계부)", isOn: $enableGagyebuTab)
+                Toggle("Show PayPal balance (페이팔 잔고)", isOn: $showGagyebuPaypal)
                 TextField("Web app URL", text: $gagyebuBaseURL)
                 SecureField("APP_TOKEN", text: $gagyebuToken)
                 HStack {

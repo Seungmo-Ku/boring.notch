@@ -11,6 +11,7 @@ import SwiftUI
 
 struct GagyebuView: View {
     @ObservedObject var manager = GagyebuManager.shared
+    @Default(.showGagyebuPaypal) var showPaypal
 
     var body: some View {
         Group {
@@ -75,7 +76,26 @@ struct GagyebuView: View {
                 }
                 .foregroundStyle(.gray)
             }
+
+            if showPaypal, let pp = s.paypal, pp.isUsable, let bal = pp.balance {
+                HStack(spacing: 4) {
+                    Image(systemName: "dollarsign.circle").font(.caption2)
+                    Text("페이팔 \(MyTabsFormat.usd(bal))").font(.caption).monospacedDigit()
+                    if let flow = paypalMonthFlow(pp) {
+                        Text("(이번 달 \(flow))").font(.caption2).monospacedDigit().lineLimit(1)
+                    }
+                }
+                .foregroundStyle(.gray)
+            }
         }
+    }
+
+    /// "+$12.00 −$3.50" 처럼 이번 달 입금·결제. 둘 다 0이면 nil
+    private func paypalMonthFlow(_ pp: GagyebuSummary.Paypal) -> String? {
+        var parts: [String] = []
+        if let i = pp.monthIn, i > 0 { parts.append("+" + MyTabsFormat.usd(i)) }
+        if let o = pp.monthOut, o > 0 { parts.append("−" + MyTabsFormat.usd(o)) }
+        return parts.isEmpty ? nil : parts.joined(separator: " ")
     }
 
     @ViewBuilder

@@ -13,6 +13,7 @@ extension Defaults.Keys {
     // 가계부 탭
     static let enableGagyebuTab = Key<Bool>("enableGagyebuTab", default: false)
     static let gagyebuBaseURL = Key<String>("gagyebuBaseURL", default: "https://gagyebu-sage.vercel.app")
+    static let showGagyebuPaypal = Key<Bool>("showGagyebuPaypal", default: true)
     // Claude 사용량 탭
     static let enableClaudeUsageTab = Key<Bool>("enableClaudeUsageTab", default: false)
 }
@@ -70,6 +71,21 @@ enum MyTabsFormat {
 
     static func number(_ n: Int) -> String {
         formatter.string(from: NSNumber(value: n)) ?? "\(n)"
+    }
+
+    private static let usdFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.locale = Locale(identifier: "en_US")
+        f.minimumFractionDigits = 2
+        f.maximumFractionDigits = 2
+        return f
+    }()
+
+    /// "$1,234.50" (음수면 "-$12.00")
+    static func usd(_ n: Double) -> String {
+        let s = usdFormatter.string(from: NSNumber(value: abs(n))) ?? String(format: "%.2f", abs(n))
+        return (n < 0 ? "-$" : "$") + s
     }
 
     /// "2시간 13분 후", "3일 4시간 후"
