@@ -353,6 +353,8 @@ struct ContentView: View {
                         GagyebuView()
                     case .claudeUsage:
                         ClaudeUsageView()
+                    case .seoulNow:
+                        SeoulNowView()
                     }
                 }
                 .transition(

@@ -2,7 +2,7 @@
 //  MyTabsStore.swift
 //  boringNotch
 //
-//  개인 탭(가계부, Claude 사용량) 설정값과 비밀값 저장소
+//  개인 탭(가계부, Claude 사용량, Seoul Now) 설정값과 비밀값 저장소
 //
 
 import Defaults
@@ -16,6 +16,10 @@ extension Defaults.Keys {
     static let showGagyebuPaypal = Key<Bool>("showGagyebuPaypal", default: true)
     // Claude 사용량 탭
     static let enableClaudeUsageTab = Key<Bool>("enableClaudeUsageTab", default: false)
+    // Seoul Now 검수 대기 탭
+    static let enableSeoulNowTab = Key<Bool>("enableSeoulNowTab", default: false)
+    /// 「콘텐츠 검수함」 DB ID (DB URL을 통째로 넣어도 됨)
+    static let seoulNowDatabaseID = Key<String>("seoulNowDatabaseID", default: "8f724e5bfbe74a47a527f22e361dd3f0")
 }
 
 /// 토큰처럼 민감한 값은 UserDefaults 대신 키체인에 저장
@@ -24,6 +28,7 @@ enum MyTabsKeychain {
 
     static let gagyebuToken = "gagyebuToken"
     static let claudeSessionKey = "claudeSessionKey"
+    static let seoulNowNotionToken = "seoulNowNotionToken"
 
     static func get(_ account: String) -> String? {
         let query: [String: Any] = [
