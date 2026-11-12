@@ -23,7 +23,8 @@ let tabs = [
 // My Tabs: 설정에서 켠 개인 탭
 let myTabs = [
     TabModel(label: "Budget", icon: "wonsign.circle.fill", view: .gagyebu),
-    TabModel(label: "Claude", icon: "gauge.with.dots.needle.33percent", view: .claudeUsage)
+    TabModel(label: "Claude", icon: "gauge.with.dots.needle.33percent", view: .claudeUsage),
+    TabModel(label: "Seoul", icon: "checklist", view: .seoulNow)
 ]
 
 struct TabSelectionView: View {
@@ -31,12 +32,14 @@ struct TabSelectionView: View {
     @Default(.boringShelf) var boringShelf
     @Default(.enableGagyebuTab) var enableGagyebuTab
     @Default(.enableClaudeUsageTab) var enableClaudeUsageTab
+    @Default(.enableSeoulNowTab) var enableSeoulNowTab
     @Namespace var animation
 
     private var visibleTabs: [TabModel] {
         var result = tabs.filter { $0.view != .shelf || boringShelf }
         result += myTabs.filter {
             ($0.view == .gagyebu && enableGagyebuTab) || ($0.view == .claudeUsage && enableClaudeUsageTab)
+                || ($0.view == .seoulNow && enableSeoulNowTab)
         }
         return result
     }
