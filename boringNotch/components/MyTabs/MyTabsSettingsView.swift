@@ -2,7 +2,7 @@
 //  MyTabsSettingsView.swift
 //  boringNotch
 //
-//  설정 > My Tabs: 가계부 탭, Claude 사용량 탭, Seoul Now 검수 대기 탭
+//  설정 > My Tabs: 가계부 탭, Claude 사용량 탭, Seoul Now 검수 대기 탭, 마감 D-day
 //
 
 import Defaults
@@ -15,6 +15,8 @@ struct MyTabsSettingsView: View {
     @Default(.enableClaudeUsageTab) var enableClaudeUsageTab
     @Default(.enableSeoulNowTab) var enableSeoulNowTab
     @Default(.seoulNowDatabaseID) var seoulNowDatabaseID
+    @Default(.showDeadlinesInsteadOfCalendar) var showDeadlines
+    @Default(.deadlineDatabaseID) var deadlineDatabaseID
 
     @State private var gagyebuToken = MyTabsKeychain.get(MyTabsKeychain.gagyebuToken) ?? ""
     @State private var claudeSessionKey = MyTabsKeychain.get(MyTabsKeychain.claudeSessionKey) ?? ""
@@ -22,6 +24,7 @@ struct MyTabsSettingsView: View {
     @State private var claudeStatus: String?
     @State private var seoulNowToken = MyTabsKeychain.get(MyTabsKeychain.seoulNowNotionToken) ?? ""
     @State private var seoulNowStatus: String?
+    @State private var deadlineStatus: String?
 
     var body: some View {
         Form {
@@ -96,6 +99,34 @@ struct MyTabsSettingsView: View {
                 Text("Seoul Now")
             } footer: {
                 Text("Notion 통합(Integration) 토큰은 키체인에 저장돼요. 검수함 DB 페이지 오른쪽 위 ••• → 연결(Connections)에서 이 통합을 추가해야 읽을 수 있어요. 상태=검수 대기 글만 읽고, 검수함은 수정하지 않아요.")
+            }
+
+            Section {
+                Toggle("Show deadlines instead of calendar (캘린더 자리에 마감 D-day)", isOn: $showDeadlines)
+                TextField("Task DB ID or URL (과제/할 일)", text: $deadlineDatabaseID)
+                HStack {
+                    Button("Test") {
+                        // 토큰은 위 Seoul Now 칸의 Notion 토큰을 같이 씀
+                        MyTabsKeychain.set(seoulNowToken, for: MyTabsKeychain.seoulNowNotionToken)
+                        guard showDeadlines else {
+                            deadlineStatus = "위 토글을 켜야 불러와요"
+                            return
+                        }
+                        deadlineStatus = "확인 중…"
+                        Task { @MainActor in
+                            let m = DeadlineManager.shared
+                            await m.refresh()
+                            deadlineStatus = m.error ?? (m.lastUpdated != nil ? "연결됨 ✓ (다가오는 마감 \(m.items.count)건)" : "응답 없음")
+                        }
+                    }
+                    if let deadlineStatus {
+                        Text(deadlineStatus).foregroundStyle(.secondary)
+                    }
+                }
+            } header: {
+                Text("Deadlines (마감 D-day)")
+            } footer: {
+                Text("켜면 홈 화면의 캘린더 자리에 상태≠완료이고 날짜가 오늘 이후인 할 일 3개를 D-day 순으로 보여줘요 (누르면 Notion으로 열림). 위 Seoul Now 칸의 Notion 토큰을 같이 쓰니, 과제/할 일 DB에도 ••• → 연결(Connections)에서 같은 통합을 추가해주세요. 끄면 원래 캘린더 설정대로 돌아가요. 읽기만 해요.")
             }
         }
         .navigationTitle("My Tabs")

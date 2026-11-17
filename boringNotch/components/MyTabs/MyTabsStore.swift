@@ -2,7 +2,7 @@
 //  MyTabsStore.swift
 //  boringNotch
 //
-//  개인 탭(가계부, Claude 사용량, Seoul Now) 설정값과 비밀값 저장소
+//  개인 탭(가계부, Claude 사용량, Seoul Now, 마감 D-day) 설정값과 비밀값 저장소
 //
 
 import Defaults
@@ -20,6 +20,10 @@ extension Defaults.Keys {
     static let enableSeoulNowTab = Key<Bool>("enableSeoulNowTab", default: false)
     /// 「콘텐츠 검수함」 DB ID (DB URL을 통째로 넣어도 됨)
     static let seoulNowDatabaseID = Key<String>("seoulNowDatabaseID", default: "8f724e5bfbe74a47a527f22e361dd3f0")
+    // 마감 D-day (홈 화면 캘린더 자리를 대체)
+    static let showDeadlinesInsteadOfCalendar = Key<Bool>("showDeadlinesInsteadOfCalendar", default: false)
+    /// 「과제/할 일」 DB ID (DB URL을 통째로 넣어도 됨)
+    static let deadlineDatabaseID = Key<String>("deadlineDatabaseID", default: "262c685d5563804d8ae9c39463d150d2")
 }
 
 /// 토큰처럼 민감한 값은 UserDefaults 대신 키체인에 저장
